@@ -31,13 +31,9 @@ class LungCubit extends Cubit<LungState> {
   }
 
   checkLung(context) async {
-    if (patientName.text.isEmpty ||
-        phonenum.text.isEmpty ||
-        age.text.isEmpty ||
-        description.text.isEmpty ||
-        filePath == null) {
+    if (filePath == null) {
       Fluttertoast.showToast(
-        msg: 'Fill all form inputs',
+        msg: 'Upload Lung Record',
       );
     } else {
       try {
@@ -49,6 +45,7 @@ class LungCubit extends Cubit<LungState> {
             file: filePath!,
             description: description.text);
         if (response.status == 'success') {
+          emit(LungLoaded());
           var txt =
               response.classification!.split('The predicted class is:').last;
           await showDialog(
@@ -68,7 +65,6 @@ class LungCubit extends Cubit<LungState> {
           age.clear();
           description.clear();
           filePath = null;
-          emit(LungLoaded());
         } else {
           Fluttertoast.showToast(
             msg: "${response.status}",

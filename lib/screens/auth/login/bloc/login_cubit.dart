@@ -12,12 +12,10 @@ class LoginCubit extends Cubit<LoginState> {
 
   TextEditingController username = TextEditingController();
   TextEditingController password = TextEditingController();
-  // GlobalKey<FormState> formKey =
-  //     GlobalKey<FormState>(debugLabel: 'GlobalFormKey #SignIn ');
+
   static LoginCubit get(context) => BlocProvider.of(context);
 
   login(context) async {
-    // if (!formKey.currentState!.validate()) return;
     try {
       emit(LoginLoading());
       LoginModel response = await LoginRepository()

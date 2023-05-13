@@ -31,13 +31,9 @@ class HeartBeatCubit extends Cubit<HeartBeatState> {
   }
 
   checkHeartBeat(context) async {
-    if (patientName.text.isEmpty ||
-        phonenum.text.isEmpty ||
-        age.text.isEmpty ||
-        description.text.isEmpty ||
-        filePath == null) {
+    if (filePath == null) {
       Fluttertoast.showToast(
-        msg: 'Fill all form inputs',
+        msg: 'Upload HeartBeat Record',
       );
     } else {
       try {
@@ -49,6 +45,8 @@ class HeartBeatCubit extends Cubit<HeartBeatState> {
             file: filePath!,
             description: description.text);
         if (response.status == 'success') {
+          emit(HeartBeatLoaded());
+
           var txt =
               response.classification!.split('The predicted class is:').last;
           await showDialog(
@@ -68,7 +66,6 @@ class HeartBeatCubit extends Cubit<HeartBeatState> {
           age.clear();
           description.clear();
           filePath = null;
-          emit(HeartBeatLoaded());
         } else {
           Fluttertoast.showToast(
             msg: "${response.status}",

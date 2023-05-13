@@ -128,7 +128,7 @@ class HomeScreen extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(builder: (context) {
-                              return const Checkmurmur();
+                              return Checkmurmur();
                             }),
                           );
                         },
@@ -138,7 +138,7 @@ class HomeScreen extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(builder: (context) {
-                              return const checklung();
+                              return checklung();
                             }),
                           );
                         },

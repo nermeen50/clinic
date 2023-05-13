@@ -15,6 +15,8 @@ class LoginHomePage extends StatefulWidget {
 }
 
 class _LoginHomePageState extends State<LoginHomePage> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,7 +54,7 @@ class _LoginHomePageState extends State<LoginHomePage> {
             padding:
                 const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
             child: Form(
-              // key: LoginCubit.get(ctx).formKey,
+              key: _formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -95,8 +97,11 @@ class _LoginHomePageState extends State<LoginHomePage> {
                     validator: (value) {
                       if (value!.isEmpty) {
                         return 'Please enter your username';
+                      } else if (value.length < 3) {
+                        return 'Name must be more than 2 charater';
+                      } else {
+                        return null;
                       }
-                      return null;
                     },
                   ),
                   const SizedBox(
@@ -121,8 +126,10 @@ class _LoginHomePageState extends State<LoginHomePage> {
                       ),
                     ),
                     validator: (value) {
-                      if (value!.isEmpty && value.length <= 6) {
+                      if (value!.isEmpty) {
                         return 'Please enter your password';
+                      } else if (value.length < 6) {
+                        return 'password must be at Least 6 charater';
                       }
                       return null;
                     },
@@ -151,7 +158,13 @@ class _LoginHomePageState extends State<LoginHomePage> {
                     text: 'Login',
                     load: state is LoginLoading ? true : false,
                     textColor: Colors.white,
-                    pressed: () => LoginCubit.get(ctx).login(context),
+                    pressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        LoginCubit.get(ctx).login(context);
+                      } else {
+                        return;
+                      }
+                    },
                   ),
                   TextButton(
                     onPressed: () {

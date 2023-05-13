@@ -14,6 +14,8 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,7 +40,7 @@ class _RegisterPageState extends State<RegisterPage> {
             padding:
                 const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
             child: Form(
-              // key: RegisterCubit.get(ctx).formKey,
+              key: _formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -77,33 +79,37 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                     validator: (value) {
                       if (value!.isEmpty) {
-                        return 'Please enter a username';
+                        return 'Please enter your username';
+                      } else if (value.length < 3) {
+                        return 'Name must be more than 2 charater';
+                      } else {
+                        return null;
                       }
-                      return null;
                     },
                   ),
                   const SizedBox(height: 22.0),
                   TextFormField(
-                    controller: RegisterCubit.get(ctx).password,
-                    decoration: InputDecoration(
-                      labelStyle: TextStyle(color: Colors.red[200]),
-                      focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20.0),
-                          borderSide: const BorderSide(
-                            color: Colors.black,
-                          )),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20.0)),
-                      labelText: '*******',
-                    ),
-                    obscureText: true,
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Please enter a password';
-                      }
-                      return null;
-                    },
-                  ),
+                      controller: RegisterCubit.get(ctx).password,
+                      decoration: InputDecoration(
+                        labelStyle: TextStyle(color: Colors.red[200]),
+                        focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20.0),
+                            borderSide: const BorderSide(
+                              color: Colors.black,
+                            )),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20.0)),
+                        labelText: '*******',
+                      ),
+                      obscureText: true,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Please enter your password';
+                        } else if (value.length < 6) {
+                          return 'password must be at Least 6 charater';
+                        }
+                        return null;
+                      }),
                   const SizedBox(height: 22.0),
                   TextFormField(
                     controller: RegisterCubit.get(ctx).email,
@@ -120,8 +126,13 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                     keyboardType: TextInputType.emailAddress,
                     validator: (value) {
+                      String pattern =
+                          r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+";
+                      RegExp regExp = RegExp(pattern);
                       if (value!.isEmpty) {
-                        return 'Please enter an email address';
+                        return 'Please enter Email';
+                      } else if (!regExp.hasMatch(value)) {
+                        return 'Please enter valid Email';
                       }
                       return null;
                     },
@@ -141,9 +152,13 @@ class _RegisterPageState extends State<RegisterPage> {
                       labelText: 'mobile',
                     ),
                     keyboardType: TextInputType.phone,
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Please enter your mobile number';
+                    validator: (text) {
+                      String pattern = r'(^(?:[+0]9)?[0-9]{10,12}$)';
+                      RegExp regExp = RegExp(pattern);
+                      if (text!.isEmpty) {
+                        return 'Please enter phone number';
+                      } else if (!regExp.hasMatch(text)) {
+                        return 'Please enter valid phone number';
                       }
                       return null;
                     },
@@ -153,7 +168,13 @@ class _RegisterPageState extends State<RegisterPage> {
                     text: 'Register',
                     load: state is RegisterLoading ? true : false,
                     textColor: Colors.white,
-                    pressed: () => RegisterCubit.get(ctx).register(context),
+                    pressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        RegisterCubit.get(ctx).register(context);
+                      } else {
+                        return;
+                      }
+                    },
                   ),
                   const SizedBox(height: 10),
                   InkWell(

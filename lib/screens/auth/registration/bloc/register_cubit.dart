@@ -13,12 +13,10 @@ class RegisterCubit extends Cubit<RegisterState> {
   TextEditingController password = TextEditingController();
   TextEditingController email = TextEditingController();
   TextEditingController mobile = TextEditingController();
-  // GlobalKey<FormState> formKey =
-  //     GlobalKey<FormState>(debugLabel: 'GlobalFormKey #Register ');
+
   static RegisterCubit get(context) => BlocProvider.of(context);
 
   register(context) async {
-    // if (!formKey.currentState!.validate()) return;
     try {
       emit(RegisterLoading());
       RegisterModel response = await RegisterRepository().registerRequest(
@@ -30,6 +28,10 @@ class RegisterCubit extends Cubit<RegisterState> {
         Navigator.of(context).push(
           MaterialPageRoute(builder: (context) => const LoginHomePage()),
         );
+        password.clear();
+        username.clear();
+        email.clear();
+        mobile.clear();
         emit(RegisterLoaded(registerModel: response));
       } else {
         Fluttertoast.showToast(

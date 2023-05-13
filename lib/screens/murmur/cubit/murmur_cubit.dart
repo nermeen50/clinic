@@ -31,13 +31,9 @@ class MurmurCubit extends Cubit<MurmurState> {
   }
 
   checkMurmur(context) async {
-    if (patientName.text.isEmpty ||
-        phonenum.text.isEmpty ||
-        age.text.isEmpty ||
-        description.text.isEmpty ||
-        filePath == null) {
+    if (filePath == null) {
       Fluttertoast.showToast(
-        msg: 'Fill all form inputs',
+        msg: 'Upload Murmur Record',
       );
     } else {
       try {
@@ -49,6 +45,7 @@ class MurmurCubit extends Cubit<MurmurState> {
             file: filePath!,
             description: description.text);
         if (response.status == 'success') {
+          emit(MurmurLoaded());
           var txt =
               response.classification!.split('The predicted class is:').last;
           await showDialog(
@@ -68,7 +65,6 @@ class MurmurCubit extends Cubit<MurmurState> {
           age.clear();
           description.clear();
           filePath = null;
-          emit(MurmurLoaded());
         } else {
           Fluttertoast.showToast(
             msg: "${response.status}",
